@@ -4,16 +4,29 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class MainActivity extends ActionBarActivity {
+    private ArrayList<Long> taps;
+    @InjectView(R.id.tvBPM) TextView tvBPM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
+        ButterKnife.inject(this);
+        taps = new ArrayList<>();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,5 +48,17 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.rlWindow)
+    public void onWindowTap(View view) {
+        long now = (new Date()).getTime();
+        taps.add(now);
+
+        if (taps.size() >= 5) {
+            long difference = now - taps.get(taps.size() - 5);
+            double BPM = 60000 / (difference / 5);
+            tvBPM.setText(String.valueOf(BPM));
+        }
     }
 }
